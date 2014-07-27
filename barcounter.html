@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8">
+		<title>Bar Counter</title>
+		<script type='text/javascript'>
+			var currentBar = 1;
+			var currentBeat = 0;
+			var playTimeoutID = -1;
+			
+			var countInBeat = 0;
+			var countInTimeoutID = -1; 
+			
+			var doneRepeat1 = false;
+			var doneRepeat2 = false;
+		
+			function playButton() {
+				//Check if this is a pause
+				if (playTimeoutID != -1) {
+					pause();
+					return;
+				}
+				else {
+					countInBeat = 0;
+					currentBeat = 0;
+					countIn();
+				}
+			}
+			
+			function countIn() {
+				if (countInBeat == 0) {
+					speak("And");
+				}
+				else {
+					speak(countInBeat);
+				}
+				countInBeat++;
+				if (countInBeat > document.getElementById('beatsperbar').value) {
+					playDelayed();
+				}
+				else {
+					var bps = document.getElementById('bpm').value / 60;
+					var mspb = 1 / bps * 1000;
+					countInTimeoutID = window.setTimeout(countIn, mspb);
+				}
+			}
+		
+			function play() {
+				currentBeat++;
+				if (currentBeat > document.getElementById('beatsperbar').value) {
+					if (!doRepeat()) {
+						currentBar++;
+					}
+					currentBeat = 1;
+				}
+				if (currentBeat == 1) {
+					speak(currentBar);
+				}
+				else {
+					speak(currentBeat);
+				}
+				setReadout();
+				playDelayed();
+			}
+			
+			function playDelayed() {
+				var bps = document.getElementById('bpm').value / 60;
+				var mspb = 1 / bps * 1000;
+				playTimeoutID = window.setTimeout(play, mspb);
+				document.getElementById('playbutton').value = 'Pause';
+			}
+			
+			function doRepeat() {
+				//Repeat 1
+				if (!doneRepeat1 && document.getElementById('userepeat1').checked && currentBar == document.getElementById('repeat1from').value) {
+					currentBar = document.getElementById('repeat1to').value;
+					doneRepeat1 = true;
+					return true;
+				}
+				//Repeat 2
+				if (!doneRepeat2 && document.getElementById('userepeat2').checked && currentBar == document.getElementById('repeat2from').value) {
+					currentBar = document.getElementById('repeat2to').value;
+					doneRepeat2 = true;
+					return true;
+				}
+				return false;
+			}
+			
+			function pause() {
+				window.clearTimeout(playTimeoutID);
+				playTimeoutID = -1;
+				document.getElementById('playbutton').value = 'Play';
+			}
+			
+			function restart() {
+				currentBar = document.getElementById('restartfrom').value;
+				currentBeat = 1;
+				doneRepeat1 = false;
+				doneRepeat2 = false;
+				setReadout();
+			}
+			
+			function setReadout() {
+				document.getElementById('barreadout').innerHTML = currentBar;
+				document.getElementById('beatreadout').innerHTML = currentBeat;
+			}
+			
+			function speak(speech) {
+				if (document.getElementById('readaloud').checked) {
+					var msg = new SpeechSynthesisUtterance(speech);
+					msg.rate = 5;
+					window.speechSynthesis.speak(msg);
+				}
+			}
+			
+			function saveConfig(name) {
+				localStorage.setItem(name + '-bars', document.getElementById('bars').value);
+				localStorage.setItem(name + '-beatsperbar', document.getElementById('beatsperbar').value);
+				localStorage.setItem(name + '-bpm', document.getElementById('bpm').value);
+				localStorage.setItem(name + '-repeat1from', document.getElementById('repeat1from').value);
+				localStorage.setItem(name + '-repeat1to', document.getElementById('repeat1to').value);
+				localStorage.setItem(name + '-repeat2from', document.getElementById('repeat2from').value);
+				localStorage.setItem(name + '-repeat2to', document.getElementById('repeat2to').value);
+			}
+			
+			function loadConfig(name) {
+				document.getElementById('bars').value = localStorage.getItem(name + '-bars');
+				document.getElementById('beatsperbar').value = localStorage.getItem(name + '-beatsperbar');
+				document.getElementById('bpm').value = localStorage.getItem(name + '-bpm');
+				document.getElementById('repeat1from').value = localStorage.getItem(name + '-repeat1from');
+				document.getElementById('repeat1to').value = localStorage.getItem(name + '-repeat1to');
+				document.getElementById('repeat2from').value = localStorage.getItem(name + '-repeat2from');
+				document.getElementById('repeat2to').value = localStorage.getItem(name + '-repeat2to');
+			}
+		</script>
+	</head>
+	<body style='background-color:#459078'>
+		<!--Controls-->
+		<div style='background-color:#9BE69B; height:100px; text-align:centre;'>
+			<div style='color:#FFFFFF; float:left;'>
+				<table>
+					<tr><td style='font-weight:bold;'>Basic setup:</td><td></td></tr>
+					<tr><td>Number of bars:</td><td><input type='number' id='bars' min='1' value='20' style='width:30px;'></td></tr>
+					<tr><td>Beats per bar:</td><td><input type='number' id='beatsperbar' min='1' value='4' style='width:30px;'></td></tr>
+					<tr><td>Read aloud:</td><td><input type='checkbox' id='readaloud' value='true' checked></td></tr>
+				</table>
+			</div>
+			<div style='color:#FFFFFF; float:left;'>
+				<table>
+					<tr><td style='font-weight:bold;'>Playback control:</td><td></td></tr>
+					<tr><td>Beats per minute:</td><td><input type='number' id='bpm' min='1' value='60' style='width:40px;'></td></tr>
+					<tr>
+						<td><input type='button' id='playbutton' value='Play' onclick='playButton()'></td>
+						<td><input type='button' value='Restart' onclick='restart()'><input type='number' id='restartfrom' min='1' value='1' style='width:30px;'></td>
+					</tr>
+				</table>
+			</div>
+			<div style='color:#FFFFFF; float:left;'>
+				<table>
+					<tr><td style='font-weight:bold;'>Repeats:</td><td></td><td></td></tr>
+					<tr>
+						<td>Repeat 1:</td>
+						<td>From bar: <input type='number' id='repeat1from' min='1' value='0' style='width:30px;'></td>
+						<td>To bar: <input type='number' id='repeat1to' min='1' value='0' style='width:30px;'></td>
+						<td><input type='checkbox' id='userepeat1' checked></td>
+					</tr>
+					<tr>
+						<td>Repeat 2:</td>
+						<td>From bar: <input type='number' id='repeat2from' min='1' value='0' style='width:30px;'></td>
+						<td>To bar: <input type='number' id='repeat2to' min='1' value='0' style='width:30px;'></td>
+						<td><input type='checkbox' id='userepeat2' checked></td>
+					</tr>
+				</table>
+			</div>
+			<div style='color:#FFFFFF; float:left;'>
+				<table>
+					<tr><td style='font-weight:bold;'>Save and load:</td><td></td></tr>
+					<tr>
+						<td>Load a piece:</td>
+						<td><input type='text' id='loadpiece' style='width:100px;'></td>
+						<td><input type='button' value='Load' onclick='loadConfig(document.getElementById("loadpiece").value);'></td>
+					</tr>
+					<tr>
+						<td>Save a piece:</td>
+						<td><input type='text' id='savepiece' style='width:100px;'></td>
+						<td><input type='button' value='Save' onclick='saveConfig(document.getElementById("loadpiece").value);'></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!--Main readout-->
+		<div style='color:#FFFFFF; background-color:#9BE69B; text-align: center;'>
+			<div id='barreadout' style='font-size: 260px; font-weight:bold;'>1</div>
+			<div id='beatreadout' style='font-size: 60px; font-weight:bold;'>1</div>
+		</div>
+	</body>
+</html>
