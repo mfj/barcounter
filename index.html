@@ -110,7 +110,7 @@
 				if (document.getElementById('readaloud').checked) {
 					var msg = new SpeechSynthesisUtterance(speech);
 					var voices = window.speechSynthesis.getVoices();
-					msg.voice = voices[2];
+					msg.voice = voices[1];
 					//msg.rate = 5;
 					window.speechSynthesis.speak(msg);
 				}
