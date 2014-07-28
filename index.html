@@ -115,7 +115,9 @@
 			function speak(speech) {
 				if (document.getElementById('readaloud').checked) {
 					var msg = new SpeechSynthesisUtterance(speech);
-					msg.rate = 5;
+					var voices = window.speechSynthesis.getVoices();
+					msg.voice = voices[0];
+					//msg.rate = 5;
 					window.speechSynthesis.speak(msg);
 				}
 			}
