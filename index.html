@@ -14,6 +14,7 @@
 			
 			var doneRepeat1 = false;
 			var doneRepeat2 = false;
+			var doneRepeat3 = false;
 		
 			function playButton() {
 				//Check if this is a pause
@@ -90,6 +91,12 @@
 					doneRepeat2 = true;
 					return true;
 				}
+				//Repeat 3
+				if (!doneRepeat3 && document.getElementById('userepeat3').checked && currentBar == document.getElementById('repeat3from').value) {
+					currentBar = document.getElementById('repeat3to').value;
+					doneRepeat3 = true;
+					return true;
+				}
 				return false;
 			}
 			
@@ -104,6 +111,7 @@
 				currentBeat = 1;
 				doneRepeat1 = false;
 				doneRepeat2 = false;
+				doneRepeat3 = false;
 				setReadout();
 			}
 			
@@ -115,9 +123,7 @@
 			function speak(speech) {
 				if (document.getElementById('readaloud').checked) {
 					var msg = new SpeechSynthesisUtterance(speech);
-					var voices = window.speechSynthesis.getVoices();
-					msg.voice = voices[0];
-					//msg.rate = 5;
+					msg.rate = 5;
 					window.speechSynthesis.speak(msg);
 				}
 			}
@@ -130,6 +136,8 @@
 				localStorage.setItem(name + '-repeat1to', document.getElementById('repeat1to').value);
 				localStorage.setItem(name + '-repeat2from', document.getElementById('repeat2from').value);
 				localStorage.setItem(name + '-repeat2to', document.getElementById('repeat2to').value);
+				localStorage.setItem(name + '-repeat3from', document.getElementById('repeat3from').value);
+				localStorage.setItem(name + '-repeat3to', document.getElementById('repeat3to').value);
 			}
 			
 			function loadConfig(name) {
@@ -140,12 +148,14 @@
 				document.getElementById('repeat1to').value = localStorage.getItem(name + '-repeat1to');
 				document.getElementById('repeat2from').value = localStorage.getItem(name + '-repeat2from');
 				document.getElementById('repeat2to').value = localStorage.getItem(name + '-repeat2to');
+				document.getElementById('repeat3from').value = localStorage.getItem(name + '-repeat3from');
+				document.getElementById('repeat3to').value = localStorage.getItem(name + '-repeat3to');
 			}
 		</script>
 	</head>
 	<body style='background-color:#459078'>
 		<!--Controls-->
-		<div style='background-color:#9BE69B; height:100px; text-align:centre;'>
+		<div style='background-color:#9BE69B; height:120px; text-align:centre;'>
 			<div style='color:#FFFFFF; float:left;'>
 				<table>
 					<tr><td style='font-weight:bold;'>Basic setup:</td><td></td></tr>
@@ -178,6 +188,12 @@
 						<td>From bar: <input type='number' id='repeat2from' min='1' value='0' style='width:30px;'></td>
 						<td>To bar: <input type='number' id='repeat2to' min='1' value='0' style='width:30px;'></td>
 						<td><input type='checkbox' id='userepeat2' checked></td>
+					</tr>
+					<tr>
+						<td>Repeat 3:</td>
+						<td>From bar: <input type='number' id='repeat3from' min='1' value='0' style='width:30px;'></td>
+						<td>To bar: <input type='number' id='repeat3to' min='1' value='0' style='width:30px;'></td>
+						<td><input type='checkbox' id='userepeat3' checked></td>
 					</tr>
 				</table>
 			</div>
