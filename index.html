@@ -31,10 +31,10 @@
 			
 			function countIn() {
 				if (countInBeat == 0) {
-					speak("And");
+					speak("And", 1);
 				}
 				else {
-					speak(countInBeat);
+					speak(countInBeat, 1);
 				}
 				countInBeat++;
 				if (countInBeat > document.getElementById('beatsperbar').value) {
@@ -50,8 +50,10 @@
 			function play() {
 				//Bar finished?
 				currentBeat++;
+				var didRepeat = false;
 				if (currentBeat > document.getElementById('beatsperbar').value) {
-					if (!doRepeat()) {
+					didRepeat = doRepeat();
+					if (!didRepeat) {
 						currentBar++;
 					}
 					currentBeat = 1;
@@ -61,11 +63,14 @@
 					pause();
 					return;
 				}
-				if (currentBeat == 1) {
-					speak(currentBar);
-				}
-				else {
-					speak(currentBeat);
+				//Speak bar/beat unless we repeated, when we say 'repeat' instead!
+				if (!didRepeat) {
+					if (currentBeat == 1) {
+						speak(currentBar, 1);
+					}
+					else {
+						speak(currentBeat, 0.4);
+					}
 				}
 				setReadout();
 				playDelayed();
@@ -82,18 +87,21 @@
 				//Repeat 1
 				if (!doneRepeat1 && document.getElementById('userepeat1').checked && currentBar == document.getElementById('repeat1from').value) {
 					currentBar = document.getElementById('repeat1to').value;
+					speak("Repeat", 1);
 					doneRepeat1 = true;
 					return true;
 				}
 				//Repeat 2
 				if (!doneRepeat2 && document.getElementById('userepeat2').checked && currentBar == document.getElementById('repeat2from').value) {
 					currentBar = document.getElementById('repeat2to').value;
+					speak("Repeat", 1);
 					doneRepeat2 = true;
 					return true;
 				}
 				//Repeat 3
 				if (!doneRepeat3 && document.getElementById('userepeat3').checked && currentBar == document.getElementById('repeat3from').value) {
 					currentBar = document.getElementById('repeat3to').value;
+					speak("Repeat", 1);
 					doneRepeat3 = true;
 					return true;
 				}
@@ -120,10 +128,10 @@
 				document.getElementById('beatreadout').innerHTML = currentBeat;
 			}
 			
-			function speak(speech) {
+			function speak(speech, volume) {
 				if (document.getElementById('readaloud').checked) {
 					var msg = new SpeechSynthesisUtterance(speech);
-					msg.rate = 5;
+					msg.volume = volume;
 					window.speechSynthesis.speak(msg);
 				}
 			}
