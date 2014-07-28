@@ -47,12 +47,18 @@
 			}
 		
 			function play() {
+				//Bar finished?
 				currentBeat++;
 				if (currentBeat > document.getElementById('beatsperbar').value) {
 					if (!doRepeat()) {
 						currentBar++;
 					}
 					currentBeat = 1;
+				}
+				//Piece finished?
+				if (currentBar > document.getElementById('bars').value) {
+					pause();
+					return;
 				}
 				if (currentBeat == 1) {
 					speak(currentBar);
