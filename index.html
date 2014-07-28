@@ -9,6 +9,7 @@
 			var currentBeat = 0;
 			var playTimeoutID = -1;
 			
+			var countInBar = 1;
 			var countInBeat = 0;
 			var countInTimeoutID = -1; 
 			
@@ -24,6 +25,7 @@
 				}
 				else {
 					countInBeat = 0;
+					countInBar = 1;
 					currentBeat = 0;
 					countIn();
 				}
@@ -36,15 +38,21 @@
 				else {
 					speak(countInBeat, 1);
 				}
+				document.getElementById('beatreadout').innerHTML = 'Count in: ' + countInBeat;
 				countInBeat++;
 				if (countInBeat > document.getElementById('beatsperbar').value) {
-					playDelayed();
+					if (countInBar >= 2) { 
+						playDelayed();
+						return;
+					}
+					else {
+						countInBar++;
+						countInBeat = 1;
+					}
 				}
-				else {
-					var bps = document.getElementById('bpm').value / 60;
-					var mspb = 1 / bps * 1000;
-					countInTimeoutID = window.setTimeout(countIn, mspb);
-				}
+				var bps = document.getElementById('bpm').value / 60;
+				var mspb = 1 / bps * 1000;
+				countInTimeoutID = window.setTimeout(countIn, mspb);
 			}
 		
 			function play() {
