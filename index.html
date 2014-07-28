@@ -92,14 +92,14 @@
 					return true;
 				}
 				//Repeat 2
-				if (!doneRepeat2 && document.getElementById('userepeat2').checked && currentBar == document.getElementById('repeat2from').value) {
+				if (doneRepeat1 && !doneRepeat2 && document.getElementById('userepeat2').checked && currentBar == document.getElementById('repeat2from').value) {
 					currentBar = document.getElementById('repeat2to').value;
 					speak("Repeat", 1);
 					doneRepeat2 = true;
 					return true;
 				}
 				//Repeat 3
-				if (!doneRepeat3 && document.getElementById('userepeat3').checked && currentBar == document.getElementById('repeat3from').value) {
+				if (doneRepeat2 && !doneRepeat3 && document.getElementById('userepeat3').checked && currentBar == document.getElementById('repeat3from').value) {
 					currentBar = document.getElementById('repeat3to').value;
 					speak("Repeat", 1);
 					doneRepeat3 = true;
