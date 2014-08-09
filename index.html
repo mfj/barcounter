@@ -71,8 +71,9 @@
 					pause();
 					return;
 				}
-				//Speak bar/beat unless we repeated, when we say 'repeat' instead!
-				if (!didRepeat) {
+				//Speak bar/beat unless we are preparing for a repeat, in which case
+				//we'll say which bar to repeat to
+				if (!prepareRepeat()) {
 					if (currentBeat == 1) {
 						speak(currentBar, 1);
 					}
@@ -95,22 +96,47 @@
 				//Repeat 1
 				if (!doneRepeat1 && document.getElementById('userepeat1').checked && currentBar == document.getElementById('repeat1from').value) {
 					currentBar = document.getElementById('repeat1to').value;
-					speak("Repeat", 1);
 					doneRepeat1 = true;
 					return true;
 				}
 				//Repeat 2
 				if (doneRepeat1 && !doneRepeat2 && document.getElementById('userepeat2').checked && currentBar == document.getElementById('repeat2from').value) {
 					currentBar = document.getElementById('repeat2to').value;
-					speak("Repeat", 1);
 					doneRepeat2 = true;
 					return true;
 				}
 				//Repeat 3
 				if (doneRepeat2 && !doneRepeat3 && document.getElementById('userepeat3').checked && currentBar == document.getElementById('repeat3from').value) {
 					currentBar = document.getElementById('repeat3to').value;
-					speak("Repeat", 1);
 					doneRepeat3 = true;
+					return true;
+				}
+				return false;
+			}
+			
+			function prepareRepeat() {
+				//Repeat 1
+				if (!doneRepeat1 && document.getElementById('userepeat1').checked && currentBar == document.getElementById('repeat1from').value) {
+					return prepareRepeatSpeak(document.getElementById('repeat1to').value);
+				}
+				//Repeat 2
+				if (doneRepeat1 && !doneRepeat2 && document.getElementById('userepeat2').checked && currentBar == document.getElementById('repeat2from').value) {
+					return prepareRepeatSpeak(document.getElementById('repeat2to').value);
+				}
+				//Repeat 3
+				if (doneRepeat2 && !doneRepeat3 && document.getElementById('userepeat3').checked && currentBar == document.getElementById('repeat3from').value) {
+					return prepareRepeatSpeak(document.getElementById('repeat3to').value);
+				}
+				return false;
+			}
+			
+			function prepareRepeatSpeak(toBar) {
+				if (currentBeat == document.getElementById('beatsperbar').value) {
+					speak("" + toBar, 1);
+					return true;
+				}
+				else if (currentBeat == document.getElementById('beatsperbar').value - 1) {
+					speak("Repeat bar", 1);
 					return true;
 				}
 				return false;
