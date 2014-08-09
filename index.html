@@ -67,7 +67,7 @@
 					currentBeat = 1;
 				}
 				//Piece finished?
-				if (currentBar > document.getElementById('bars').value) {
+				if (currentBar == 0 || currentBar > document.getElementById('bars').value) {
 					pause();
 					return;
 				}
@@ -131,6 +131,11 @@
 			}
 			
 			function prepareRepeatSpeak(toBar) {
+				//If we're being asked to repeat to the end (ie. jump to the end of the piece)
+				if (toBar == 0 || toBar > document.getElementById('bars').value) {
+					return false;
+				}
+				//Otherwise, read out repeat preparation
 				if (currentBeat == document.getElementById('beatsperbar').value) {
 					speak("" + toBar, 1);
 					return true;
@@ -218,7 +223,7 @@
 			</div>
 			<div style='color:#FFFFFF; float:left;'>
 				<table>
-					<tr><td style='font-weight:bold;'>Repeats:</td><td></td><td></td></tr>
+					<tr><td style='font-weight:bold;' colspan=3>Repeats: (Repeat to bar '0' to jump to end)</td></tr>
 					<tr>
 						<td>Repeat 1:</td>
 						<td>From bar: <input type='number' id='repeat1from' min='1' value='0' style='width:30px;'></td>
