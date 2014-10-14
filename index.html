@@ -169,8 +169,10 @@
 			
 			function speak(speech, volume) {
 				if (document.getElementById('readaloud').checked) {
-					var msg = new SpeechSynthesisUtterance(speech);
+					var msg = new SpeechSynthesisUtterance();
+                    msg.rate = 5.0;
 					msg.volume = volume;
+                    msg.text = speech;
 					window.speechSynthesis.speak(msg);
 				}
 			}
@@ -223,21 +225,21 @@
 			</div>
 			<div style='color:#FFFFFF; float:left;'>
 				<table>
-					<tr><td style='font-weight:bold;' colspan=3>Repeats: (Repeat to bar '0' to jump to end)</td></tr>
+					<tr><td style='font-weight:bold;' colspan=3>Jumps: (Jump to bar '0' to end)</td></tr>
 					<tr>
-						<td>Repeat 1:</td>
+						<td>Jump 1:</td>
 						<td>From bar: <input type='number' id='repeat1from' min='1' value='0' style='width:30px;'></td>
 						<td>To bar: <input type='number' id='repeat1to' min='1' value='0' style='width:30px;'></td>
 						<td><input type='checkbox' id='userepeat1' checked></td>
 					</tr>
 					<tr>
-						<td>Repeat 2:</td>
+						<td>Jump 2:</td>
 						<td>From bar: <input type='number' id='repeat2from' min='1' value='0' style='width:30px;'></td>
 						<td>To bar: <input type='number' id='repeat2to' min='1' value='0' style='width:30px;'></td>
 						<td><input type='checkbox' id='userepeat2' checked></td>
 					</tr>
 					<tr>
-						<td>Repeat 3:</td>
+						<td>Jump 3:</td>
 						<td>From bar: <input type='number' id='repeat3from' min='1' value='0' style='width:30px;'></td>
 						<td>To bar: <input type='number' id='repeat3to' min='1' value='0' style='width:30px;'></td>
 						<td><input type='checkbox' id='userepeat3' checked></td>
